@@ -1,29 +1,26 @@
 class Solution {
     public boolean isBipartite(int[][] graph) {
-        int col[]=new int[graph.length];
-        for(int i=0;i<col.length;i++){
-            col[i]=-1;
+        int[] odd = new int[graph.length];
+        for (int i = 0; i < graph.length; i++) {
+            if (!bfs(i, odd, graph)) return false;
         }
-        Queue<Integer> qe=new LinkedList<>();
-        for(int i=0;i<graph.length;i++){
-           if(col[i]==-1){
-               qe.add(i);
-               col[i]=1;
-               while(!qe.isEmpty()){
-                   int curr=qe.poll();
-                   int arr[]=graph[curr];
-                   for(int j=0;j<arr.length;j++){
-                       if(col[graph[curr][j]]==-1){
-                         
-                           col[graph[curr][j]]=1-col[curr];
-                           qe.add(graph[curr][j]);
-                       }
-                       else if(col[graph[curr][j]]==col[curr]){
-                           return false;
-                       }
-                   }
-               }
-           }
+        return true;
+    }
+
+    public boolean bfs(int i, int[] odd, int[][] graph) {
+        if (odd[i] != 0) return true;
+        Deque<Integer> q = new ArrayDeque<>();
+        odd[i] = 1; // Instead of -1
+        q.add(i);
+        while (!q.isEmpty()) {
+            i = q.poll();
+            for (int node : graph[i]) { // Iterate over neighbors of node i
+                if (odd[i] == odd[node]) return false;
+                else if (odd[node] == 0) {
+                    q.add(node);
+                    odd[node] = -odd[i];
+                }
+            }
         }
         return true;
     }
